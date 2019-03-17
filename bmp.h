@@ -82,11 +82,11 @@ BITMAPFILEHEADER getbmpFileHeader(FILE *fptr);
 
 BITMAPINFOHEADER getbmpInfoHeader(FILE *fptr);
 
-RGBTRIPLE *getbmpRgb(FILE *fptr, int biHeight, int biWidth, int padding, int backwards);
+RGBTRIPLE *getbmpRgb(FILE *fptr, int biHeight, int biWidth, int padding);
 
 int calculatePadding(int biWidth);
 
-BITMAP getbmpFromFile(FILE *fptr, int backwards);
+BITMAP getbmpFromFile(FILE *fptr);
 
-void writeBmp(FILE *fptr, BITMAP bmp, int padding, int backwards);
+void writeBmp(FILE *fptr, BITMAP bmp, int padding);
 

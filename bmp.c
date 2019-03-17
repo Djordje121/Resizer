@@ -17,13 +17,11 @@ BITMAPINFOHEADER getbmpInfoHeader(FILE *fptr)
     return bi;
 }
 
-RGBTRIPLE *getbmpRgb(FILE *fptr, int biHeight, int biWidth, int padding, int backwards)
+RGBTRIPLE *getbmpRgb(FILE *fptr, int biHeight, int biWidth, int padding)
 {
-    int len = abs(biHeight) * biWidth;
+    biHeight = abs(biHeight);
+    int len = biHeight * biWidth;
     RGBTRIPLE *rgbt = malloc(len * sizeof(RGBTRIPLE));
-
-    if (!backwards)
-        biHeight = abs(biHeight);
 
     int k = 0;
     for (int i = 0; i < biHeight; i++)
@@ -44,11 +42,11 @@ RGBTRIPLE *getbmpRgb(FILE *fptr, int biHeight, int biWidth, int padding, int bac
     return rgbt;
 }   
 
-BITMAP getbmpFromFile(FILE *fptr, int backwards)
+BITMAP getbmpFromFile(FILE *fptr)
 {
     BITMAP bmp  = {.bf = getbmpFileHeader(fptr), .bi = getbmpInfoHeader(fptr)};
     int padding = calculatePadding(bmp.bi.biWidth);
-    bmp.rgbt = getbmpRgb(fptr, bmp.bi.biHeight, bmp.bi.biWidth, padding, backwards);
+    bmp.rgbt = getbmpRgb(fptr, bmp.bi.biHeight, bmp.bi.biWidth, padding);
 
     return bmp;
 }
@@ -60,7 +58,7 @@ int calculatePadding(int biWidth)
 }
 
 
-void writeBmp(FILE *fptr, BITMAP bmp, int padding, int backwards)
+void writeBmp(FILE *fptr, BITMAP bmp, int padding)
 {
     // write file header
     fwrite(&bmp.bf, sizeof(BITMAPFILEHEADER), 1, fptr);
@@ -68,10 +66,7 @@ void writeBmp(FILE *fptr, BITMAP bmp, int padding, int backwards)
     // write file info header
     fwrite(&bmp.bi, sizeof(BITMAPINFOHEADER), 1, fptr);
 
-    int biHeight = bmp.bi.biHeight;
-    if (!backwards)
-        biHeight = abs(biHeight);
-
+    int biHeight = abs(bmp.bi.biHeight);
     int k = 0;
     for (int i = 0; i < biHeight; i++)
     {

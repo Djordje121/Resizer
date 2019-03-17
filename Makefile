@@ -11,4 +11,4 @@ bmp.o: bmp.c bmp.h
 	$(CC) -c bmp.c
 
 clean:
-	rm -f *.o 
+	rm -f *.o resize

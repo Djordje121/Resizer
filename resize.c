@@ -16,20 +16,19 @@ int main(int argc, char *argv[])
     char ch;
     int bmpInfo = 0;
     int resize = 0;
-    char *infile;
-    char *outfile;
+    const char *infile;
+    const char *outfile;
 
-    while ((ch = getopt(argc, argv, "vo:c:")) != -1)
+    while ((ch = getopt(argc, argv, "o:c:v")) != -1)
     {
         switch (ch)
         {
             case 'v':
                 bmpInfo = 1;
                 break;
-            case 'o':
+            case 'o':         
             outfile = optarg;
-                break;
-            
+                break;      
             case 'c':
             resize = atoi(optarg);
             break;
@@ -38,7 +37,7 @@ int main(int argc, char *argv[])
 
     if (argc < 6)
     {
-        printf("Ussage: <cinfile> -o <outfile> -c <n> -v(optional)\n");
+        printf("Ussage: <infile path> -o <outfile path> -c <n> -v(optional)\n");
         return 1;
     }
 
@@ -57,11 +56,11 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    BITMAP bmp = getbmpFromFile(inptr, 0);
+    BITMAP bmp = getbmpFromFile(inptr);
 
     BITMAP resized = resizeBmp(bmp, resize);
     int padding = calculatePadding(resized.bi.biWidth);
-    writeBmp(outptr, resized, padding, 0);
+    writeBmp(outptr, resized, padding);
     
     printf("Infile: %s\n", infile);
     printf("Outfile: %s\n", outfile);
