@@ -84,6 +84,11 @@ int main(int argc, char *argv[])
 
     printf("Resized successfull\n");
 
+
+	// Close streams.
+	fclose(inptr);
+	fclose(outptr);
+
     return 0;
 }
 
