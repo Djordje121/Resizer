@@ -8,40 +8,27 @@
 #include "bmp.h"
 #include "resize.h"
 
-
-#define PRINT_INFO (bmpInfo == 0 ? "false" : "true")
-
 int main(int argc, char *argv[])
 {
     char ch;
-    int bmpInfo = 0;
     int resize = 0;
     const char *infile;
     const char *outfile;
 
-    while ((ch = getopt(argc, argv, "o:c:v")) != -1)
+    if (argc != 4)
     {
-        switch (ch)
-        {
-            case 'v':
-                bmpInfo = 1;
-                break;
-            case 'o':         
-            outfile = optarg;
-                break;      
-            case 'c':
-            resize = atoi(optarg);
-            break;
-        }
-    }
-
-    if (argc < 6)
-    {
-        printf("Ussage: <infile path> -o <outfile path> -c <n> -v(optional)\n");
+        printf("Ussage: <infile path> <outfile path> <n>\n");
         return 1;
     }
 
-    infile = argv[optind];
+    infile = argv[1];
+    outfile = argv[2];
+    resize = atoi(argv[3]);
+    if (resize <= 0)
+    {
+        printf("Invalid resize factor\n");
+        return 2;
+    }
     FILE *inptr = fopen(infile, "r");
     if (inptr == NULL)
     {
@@ -56,6 +43,7 @@ int main(int argc, char *argv[])
         return 2;
     }
 
+    // Resize logic.
     BITMAP bmp = getbmpFromFile(inptr);
 
     BITMAP resized = resizeBmp(bmp, resize);
@@ -64,24 +52,6 @@ int main(int argc, char *argv[])
     
     printf("Infile: %s\n", infile);
     printf("Outfile: %s\n", outfile);
-    printf("Print bmp info: %s\n", PRINT_INFO);
-
-    if (bmpInfo)
-    {
-        printf(">>>>>>>>>>>>>>>> INPUT BMP\n");
-        printf("Width %d\n", bmp.bi.biHeight);
-        printf("Height: %d\n", bmp.bi.biHeight);
-        printf("Image size(bytes): %d\n", bmp.bi.biSizeImage);
-        printf("File size(bytes): %d\n", bmp.bf.bfSize);
-        printf("Bits per pixel %d\n", bmp.bi.biBitCount);
-        printf("\n<<<<<<<<<<<<<<<< OUTPUT BMP\n");
-        printf("Width %d\n", resized.bi.biHeight);
-        printf("Height: %d\n", resized.bi.biHeight);
-        printf("Image size(bytes): %d\n", resized.bi.biSizeImage);
-        printf("File size(bytes): %d\n", resized.bf.bfSize);
-        printf("Bits per pixel %d\n", resized.bi.biBitCount);
-    }
-
     printf("Resized successfull\n");
 
 
