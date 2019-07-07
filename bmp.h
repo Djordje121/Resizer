@@ -77,17 +77,17 @@ BITMAP;
 
 
 
-
-BITMAPFILEHEADER getbmpFileHeader(FILE *fptr);
-
-BITMAPINFOHEADER getbmpInfoHeader(FILE *fptr);
-
-RGBTRIPLE *getbmpRgb(FILE *fptr, int biHeight, int biWidth, int padding);
-
-int calculatePadding(int biWidth);
-
+// Read bitmap file header from file and store in structure.
+BITMAPFILEHEADER getBitmapFileHeader(FILE *fptr);
+// Read bitmap info header from file and store in strucutre.
+BITMAPINFOHEADER getBitmapInfoHeader(FILE *fptr);
+// Read rgbt triple from file and store in structure array.
+RGBTRIPLE *getBitmapRgbTriple(FILE *fptr, int biHeight, int biWidth, int padding);
+// Calculate bitmap padding.
+int calculateBitmapPadding(int biWidth);
+// Get data from .bmp file and store in bitmap strucutre.
 BITMAP getBitmapFromFile(FILE *fptr);
-
+// Write bitmap structure into .bmp file.
 void writeBitmap(FILE *fptr, BITMAP bmp, int padding);
 
 

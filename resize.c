@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     BITMAP currentBitmap = getBitmapFromFile(inptr);
 
     BITMAP resizedBitmap = resizeBmp(currentBitmap, resize);
-    int padding = calculatePadding(resizedBitmap.bi.biWidth);
+    int padding = calculateBitmapPadding(resizedBitmap.bi.biWidth);
     writeBitmap(outptr, resizedBitmap, padding);
     
     printf("Resized successfull\n");
@@ -69,7 +69,7 @@ BITMAP resizeBmp(BITMAP inputBitmap, int n)
     resizedBmp.bi.biWidth = inputBitmap.bi.biWidth * n;
     resizedBmp.bi.biHeight = inputBitmap.bi.biHeight * n;
     // Calculate resized bitmap padding.
-    int currentBiPadding = calculatePadding(resizedBmp.bi.biWidth);
+    int currentBiPadding = calculateBitmapPadding(resizedBmp.bi.biWidth);
     // Temporary storrage.
     int resizedBiWidth = abs(resizedBmp.bi.biWidth);
     int resizedBiHeight = abs(resizedBmp.bi.biHeight);
