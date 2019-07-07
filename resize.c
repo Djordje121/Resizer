@@ -58,62 +58,61 @@ int main(int argc, char *argv[])
 	// Close streams.
 	fclose(inptr);
 	fclose(outptr);
+    free(bmp.rgbt);
+    free(resized.rgbt);
 
     return 0;
 }
 
-
 BITMAP resizeBmp(BITMAP inputBitmap, int n)
 {
-    BITMAP resizedBmp = { inputBitmap.bf, inputBitmap.bi };
+    BITMAP resizedBmp = { inputBitmap.bf, inputBitmap.bi, NULL};
     // Resize .bmp by n factor.
     resizedBmp.bi.biWidth = inputBitmap.bi.biWidth * n;
     resizedBmp.bi.biHeight = inputBitmap.bi.biHeight * n;
-    //  calculate resized bitmap padding.
+    // Calculate resized bitmap padding.
     int currentBiPadding = calculatePadding(resizedBmp.bi.biWidth);
+    // Temporary storrage.
+    int resizedBiWidth = abs(resizedBmp.bi.biWidth);
+    int resizedBiHeight = abs(resizedBmp.bi.biHeight);
     // Update .bmp header info.
-    resizedBmp.bi.biSizeImage =  (sizeof(RGBTRIPLE) * resizedBmp.bi.biWidth + currentBiPadding) *  abs(resizedBmp.bi.biHeight);
+    resizedBmp.bi.biSizeImage = (sizeof(RGBTRIPLE) * resizedBiWidth + currentBiPadding) *  resizedBiHeight;
     resizedBmp.bf.bfSize = resizedBmp.bi.biSizeImage + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
     // Resize each pixel by n factor
-    int currentBmpLen = abs(resizedBmp.bi.biHeight) * resizedBmp.bi.biWidth;
-    RGBTRIPLE *rgbtArr = malloc(currentBmpLen * sizeof(RGBTRIPLE));
+    RGBTRIPLE *rgbtArr = malloc(resizedBiHeight * resizedBiWidth * sizeof(RGBTRIPLE));
     int k = 0;
-    int x = 0;
+    int c_rgbt = 0;
 
-    for (int i = 0; i < abs(inputBitmap.bi.biHeight); i++)
+    for (int i = 0, h = abs(inputBitmap.bi.biHeight); i < h; i++)
     {
-        for (int j = 0; j < abs(inputBitmap.bi.biWidth); j++)
+        for (int j = 0, w = abs(inputBitmap.bi.biWidth); j < w; j++)
         {
             // Read pixel from bmp.
             RGBTRIPLE rgbt = inputBitmap.rgbt[k];     
-
             // Resize pixel by n factor.
             for (int r = 0; r < n; r++)
             {
-                rgbtArr[x] = rgbt;
-                x++;
+                rgbtArr[c_rgbt] = rgbt;
+                c_rgbt++;
             }   
             k++;         
         }
-
         // Repeat n times resizing each pixel by n factor.
         for (int r = 0; r < n - 1; r++)
         {
-            for(int j = 0; j < abs(inputBitmap.bi.biWidth); j++)
+            for (int j = 0, w = abs(inputBitmap.bi.biWidth); j < w; j++)
             {
-                RGBTRIPLE rgbt = rgbtArr[x - resizedBmp.bi.biWidth];
-                for (int r = 0; r < n; r++)
+                RGBTRIPLE rgbt = rgbtArr[c_rgbt - resizedBmp.bi.biWidth];
+                for (int c = 0; c < n; c++)
                 {
-                    rgbtArr[x] = rgbt; 
-                    x++;            
+                    rgbtArr[c_rgbt] = rgbt; 
+                    c_rgbt++;            
                 }
             }
         }
     }
-
     // Update bitmap pixels.
     resizedBmp.rgbt = rgbtArr;
-
     return resizedBmp;
 }
 
