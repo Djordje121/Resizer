@@ -86,7 +86,8 @@ RGBTRIPLE *getbmpRgb(FILE *fptr, int biHeight, int biWidth, int padding);
 
 int calculatePadding(int biWidth);
 
-BITMAP getbmpFromFile(FILE *fptr);
+BITMAP getBitmapFromFile(FILE *fptr);
 
-void writeBmp(FILE *fptr, BITMAP bmp, int padding);
+void writeBitmap(FILE *fptr, BITMAP bmp, int padding);
+
 

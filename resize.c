@@ -44,22 +44,20 @@ int main(int argc, char *argv[])
     }
 
     // Resize logic.
-    BITMAP bmp = getbmpFromFile(inptr);
+    BITMAP currentBitmap = getBitmapFromFile(inptr);
 
-    BITMAP resized = resizeBmp(bmp, resize);
-    int padding = calculatePadding(resized.bi.biWidth);
-    writeBmp(outptr, resized, padding);
+    BITMAP resizedBitmap = resizeBmp(currentBitmap, resize);
+    int padding = calculatePadding(resizedBitmap.bi.biWidth);
+    writeBitmap(outptr, resizedBitmap, padding);
     
-    printf("Infile: %s\n", infile);
-    printf("Outfile: %s\n", outfile);
     printf("Resized successfull\n");
 
-
-	// Close streams.
+	// close streams.
 	fclose(inptr);
 	fclose(outptr);
-    free(bmp.rgbt);
-    free(resized.rgbt);
+    // free allocated space.
+    free(currentBitmap.rgbt);
+    free(resizedBitmap.rgbt);
 
     return 0;
 }

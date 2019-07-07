@@ -42,7 +42,7 @@ RGBTRIPLE *getbmpRgb(FILE *fptr, int biHeight, int biWidth, int padding)
     return rgbt;
 }   
 
-BITMAP getbmpFromFile(FILE *fptr)
+BITMAP getBitmapFromFile(FILE *fptr)
 {
     BITMAP bmp  = {.bf = getbmpFileHeader(fptr), .bi = getbmpInfoHeader(fptr)};
     int padding = calculatePadding(bmp.bi.biWidth);
@@ -57,29 +57,32 @@ int calculatePadding(int biWidth)
     return padding;
 }
 
-
-void writeBmp(FILE *fptr, BITMAP bmp, int padding)
+void writeBitmap(FILE *ftpr, BITMAP bmp, int padding)
 {
-    // write file header
-    fwrite(&bmp.bf, sizeof(BITMAPFILEHEADER), 1, fptr);
+    // write file header.
+    fwrite(&bmp.bf, sizeof(BITMAPFILEHEADER), 1, ftpr);
+    // write file info header.
+    fwrite(&bmp.bi, sizeof(BITMAPINFOHEADER), 1, ftpr);
 
-    // write file info header
-    fwrite(&bmp.bi, sizeof(BITMAPINFOHEADER), 1, fptr);
-
-    int biHeight = abs(bmp.bi.biHeight);
-    int k = 0;
-    for (int i = 0; i < biHeight; i++)
+    int counter = 0; 
+    // iterate over infile's scanlines
+    for (int i = 0, biHeight = abs(bmp.bi.biHeight); i < biHeight; i++)
     {
+        // iterate over pixels in scanline
         for (int j = 0; j < bmp.bi.biWidth; j++)
         {
-            RGBTRIPLE rgbt = *(bmp.rgbt + k);
-            
-            fwrite(&rgbt, sizeof(RGBTRIPLE), 1, fptr);
-            k++;
+            // read RGB triple from infile
+            RGBTRIPLE triple = *(bmp.rgbt + counter);
+            // write RGB triple to outfile
+            fwrite(&triple, sizeof(RGBTRIPLE), 1, ftpr);
+            counter++;
         }
 
         // write padding
         for (int p = 0; p < padding; p++)
-            fputc(0x00, fptr);
+        {
+            fputc(0x00, ftpr);
+        }
+            
     }
 }
